@@ -1,5 +1,8 @@
+import { DelayedRouteFallback } from "@/components/dashboard/delayed-route-fallback";
+
 export default function SettingsLoading() {
   return (
+    <DelayedRouteFallback>
     <div className="space-y-6">
       <div className="space-y-2">
         <div className="h-7 w-28 animate-pulse rounded bg-muted" />
@@ -39,5 +42,6 @@ export default function SettingsLoading() {
         </div>
       </div>
     </div>
+    </DelayedRouteFallback>
   );
 }
