@@ -24,12 +24,10 @@ export function PortfolioReturnLink() {
       normalizePortfolioReturnUrl(stored, window.location.origin) ??
       normalizePortfolioReturnUrl(referrer, window.location.origin);
 
-    if (!returnUrl) {
-      return;
+    if (returnUrl) {
+      window.sessionStorage.setItem(PORTFOLIO_RETURN_STORAGE_KEY, returnUrl);
+      setHref(returnUrl);
     }
-
-    window.sessionStorage.setItem(PORTFOLIO_RETURN_STORAGE_KEY, returnUrl);
-    setHref(returnUrl);
 
     if (fromPortfolio) {
       currentUrl.searchParams.delete("source");
@@ -42,17 +40,26 @@ export function PortfolioReturnLink() {
     }
   }, []);
 
-  if (!href) {
-    return null;
+  const className =
+    "inline-flex min-h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-xs font-medium text-foreground transition hover:bg-muted/70";
+
+  if (href) {
+    return (
+      <a href={href} className={className}>
+        <ArrowLeft className="h-3.5 w-3.5" />
+        Back to Prometheus Portfolio
+      </a>
+    );
   }
 
   return (
-    <a
-      href={href}
-      className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-xs font-medium text-foreground transition hover:bg-muted/70"
+    <button
+      type="button"
+      className={className}
+      onClick={() => window.history.back()}
     >
       <ArrowLeft className="h-3.5 w-3.5" />
       Back to Prometheus Portfolio
-    </a>
+    </button>
   );
 }
