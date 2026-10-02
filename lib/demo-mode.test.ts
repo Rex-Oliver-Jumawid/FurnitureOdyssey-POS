@@ -2,22 +2,31 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { isPortfolioDemoMode } from "@/lib/demo-mode";
 
-test("portfolio demo mode honors explicit configuration and defaults on for Vercel production", () => {
+test("portfolio demo mode honors explicit configuration and Vercel demo deployments", () => {
   const previous = {
     mode: process.env.PORTFOLIO_DEMO_MODE,
     vercel: process.env.VERCEL,
-    vercelEnv: process.env.VERCEL_ENV
+    vercelEnv: process.env.VERCEL_ENV,
+    commitRef: process.env.VERCEL_GIT_COMMIT_REF
   };
 
   try {
     delete process.env.PORTFOLIO_DEMO_MODE;
     delete process.env.VERCEL;
     delete process.env.VERCEL_ENV;
+    delete process.env.VERCEL_GIT_COMMIT_REF;
     assert.equal(isPortfolioDemoMode(), false);
 
     process.env.VERCEL = "1";
     process.env.VERCEL_ENV = "production";
     assert.equal(isPortfolioDemoMode(), true);
+
+    process.env.VERCEL_ENV = "preview";
+    process.env.VERCEL_GIT_COMMIT_REF = "feat/portfolio-demo-access";
+    assert.equal(isPortfolioDemoMode(), true);
+
+    process.env.VERCEL_GIT_COMMIT_REF = "some-other-feature";
+    assert.equal(isPortfolioDemoMode(), false);
 
     process.env.PORTFOLIO_DEMO_MODE = "false";
     assert.equal(isPortfolioDemoMode(), false);
@@ -28,7 +37,8 @@ test("portfolio demo mode honors explicit configuration and defaults on for Verc
     for (const [key, value] of Object.entries({
       PORTFOLIO_DEMO_MODE: previous.mode,
       VERCEL: previous.vercel,
-      VERCEL_ENV: previous.vercelEnv
+      VERCEL_ENV: previous.vercelEnv,
+      VERCEL_GIT_COMMIT_REF: previous.commitRef
     })) {
       if (value === undefined) {
         delete process.env[key];
