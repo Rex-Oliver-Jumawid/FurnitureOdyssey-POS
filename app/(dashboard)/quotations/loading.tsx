@@ -1,5 +1,8 @@
+import { DelayedRouteFallback } from "@/components/dashboard/delayed-route-fallback";
+
 export default function QuotationsLoading() {
   return (
+    <DelayedRouteFallback>
     <div className="space-y-6">
       <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
@@ -54,5 +57,6 @@ export default function QuotationsLoading() {
         </div>
       </section>
     </div>
+    </DelayedRouteFallback>
   );
 }
