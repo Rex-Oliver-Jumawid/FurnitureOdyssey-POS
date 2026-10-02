@@ -28,6 +28,34 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const isProtectedRoute =
+    pathname === "/" ||
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/customers") ||
+    pathname.startsWith("/products") ||
+    pathname.startsWith("/inquiries") ||
+    pathname.startsWith("/quotations") ||
+    pathname.startsWith("/orders") ||
+    pathname.startsWith("/payments") ||
+    pathname.startsWith("/deliveries") ||
+    pathname.startsWith("/documents") ||
+    pathname.startsWith("/sales-history") ||
+    pathname.startsWith("/users") ||
+    pathname.startsWith("/settings");
+
+  const portfolioDemoMode =
+    process.env.PORTFOLIO_DEMO_MODE?.trim().toLowerCase() === "true";
+
+  if (portfolioDemoMode) {
+    if (pathname === "/login") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+
+    if (isProtectedRoute) {
+      return NextResponse.next();
+    }
+  }
+
   let response = NextResponse.next({
     request
   });
@@ -56,21 +84,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user }
   } = await supabase.auth.getUser();
-
-  const isProtectedRoute =
-    request.nextUrl.pathname === "/" ||
-    request.nextUrl.pathname.startsWith("/dashboard") ||
-    request.nextUrl.pathname.startsWith("/customers") ||
-    request.nextUrl.pathname.startsWith("/products") ||
-    request.nextUrl.pathname.startsWith("/inquiries") ||
-    request.nextUrl.pathname.startsWith("/quotations") ||
-    request.nextUrl.pathname.startsWith("/orders") ||
-    request.nextUrl.pathname.startsWith("/payments") ||
-    request.nextUrl.pathname.startsWith("/deliveries") ||
-    request.nextUrl.pathname.startsWith("/documents") ||
-    request.nextUrl.pathname.startsWith("/sales-history") ||
-    request.nextUrl.pathname.startsWith("/users") ||
-    request.nextUrl.pathname.startsWith("/settings");
 
   if (!user && isProtectedRoute) {
     const loginUrl = new URL("/login", request.url);
