@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import type { PermissionAction, PermissionModule } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getPortfolioDemoUser } from "@/lib/auth/demo-user";
 import { hasPermission, type UserWithPermissions } from "@/lib/auth/permissions";
+import { isPortfolioDemoMode } from "@/lib/demo-mode";
 
 export const getCurrentAuthUser = cache(async () => {
   const supabase = await createSupabaseServerClient();
@@ -20,6 +22,10 @@ export const getCurrentAuthUser = cache(async () => {
 });
 
 export const getCurrentUserProfile = cache(async () => {
+  if (isPortfolioDemoMode()) {
+    return getPortfolioDemoUser();
+  }
+
   const authUser = await getCurrentAuthUser();
 
   if (!authUser) {
