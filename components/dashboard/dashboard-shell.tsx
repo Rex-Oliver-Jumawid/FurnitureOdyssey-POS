@@ -4,6 +4,7 @@ import type { PermissionModule } from "@prisma/client";
 import { signOut } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
+import { PortfolioReturnLink } from "@/components/dashboard/portfolio-return-link";
 import { dashboardNavItems } from "@/lib/auth/navigation";
 import { canAccessUsersPage } from "@/lib/auth/calendar-access";
 import { canViewModule, type UserWithPermissions } from "@/lib/auth/permissions";
@@ -55,9 +56,12 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
             </p>
           </div>
           {portfolioDemoMode ? (
-            <span className="rounded-full border border-border bg-muted/55 px-3 py-1 text-xs font-medium text-muted-foreground">
-              Demo mode
-            </span>
+            <div className="flex items-center gap-2">
+              <PortfolioReturnLink />
+              <span className="rounded-full border border-border bg-muted/55 px-3 py-1 text-xs font-medium text-muted-foreground">
+                Demo mode
+              </span>
+            </div>
           ) : (
             <form action={signOut}>
               <Button type="submit" variant="secondary">
