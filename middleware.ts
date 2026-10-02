@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import type { CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isPortfolioDemoMode } from "@/lib/demo-mode";
 
 type CookieToSet = {
   name: string;
@@ -43,8 +44,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/users") ||
     pathname.startsWith("/settings");
 
-  const portfolioDemoMode =
-    process.env.PORTFOLIO_DEMO_MODE?.trim().toLowerCase() === "true";
+  const portfolioDemoMode = isPortfolioDemoMode();
 
   if (portfolioDemoMode) {
     if (pathname === "/login") {
