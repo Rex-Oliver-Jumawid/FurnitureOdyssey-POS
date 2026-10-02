@@ -1,5 +1,8 @@
+import { DelayedRouteFallback } from "@/components/dashboard/delayed-route-fallback";
+
 export default function QuotationDetailLoading() {
   return (
+    <DelayedRouteFallback>
     <div className="space-y-6">
       <div className="space-y-2">
         <div className="h-7 w-40 animate-pulse rounded bg-muted" />
@@ -78,5 +81,6 @@ export default function QuotationDetailLoading() {
         </aside>
       </div>
     </div>
+    </DelayedRouteFallback>
   );
 }

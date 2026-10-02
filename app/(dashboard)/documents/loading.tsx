@@ -1,5 +1,8 @@
+import { DelayedRouteFallback } from "@/components/dashboard/delayed-route-fallback";
+
 export default function DocumentsLoading() {
   return (
+    <DelayedRouteFallback>
     <div className="space-y-6">
       <div className="space-y-2">
         <div className="h-7 w-36 animate-pulse rounded bg-muted" />
@@ -22,5 +25,6 @@ export default function DocumentsLoading() {
         </div>
       </section>
     </div>
+    </DelayedRouteFallback>
   );
 }
