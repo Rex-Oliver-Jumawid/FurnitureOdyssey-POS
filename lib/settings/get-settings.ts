@@ -1,6 +1,8 @@
 import type { Prisma } from "@prisma/client";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { companyProfile } from "@/lib/config/company-profile";
 import { prisma } from "@/lib/prisma";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import {
   appSettingsSchema,
   companyProfileSettingsSchema,
@@ -87,18 +89,29 @@ export function normalizeAppSettings(value: unknown): AppSettingsInput {
   });
 }
 
-export async function getAppSettings() {
-  const setting = await prisma.appSetting.findUnique({
-    where: {
-      key: APP_SETTINGS_KEY
-    }
-  });
+const getCachedAppSettings = unstable_cache(
+  async () => {
+    const setting = await prisma.appSetting.findUnique({
+      where: {
+        key: APP_SETTINGS_KEY
+      }
+    });
 
-  return normalizeAppSettings(setting?.value);
+    return normalizeAppSettings(setting?.value);
+  },
+  ["app-settings-v1"],
+  {
+    revalidate: 300,
+    tags: [CACHE_TAGS.appSettings]
+  }
+);
+
+export async function getAppSettings() {
+  return getCachedAppSettings();
 }
 
 export async function saveAppSettings(settings: AppSettingsInput, updatedById: string) {
-  return prisma.appSetting.upsert({
+  const saved = await prisma.appSetting.upsert({
     where: {
       key: APP_SETTINGS_KEY
     },
@@ -112,6 +125,9 @@ export async function saveAppSettings(settings: AppSettingsInput, updatedById: s
       updatedById
     }
   });
+
+  revalidateTag(CACHE_TAGS.appSettings);
+  return saved;
 }
 
 export function documentPrefixForKind(

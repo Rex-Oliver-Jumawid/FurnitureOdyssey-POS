@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { hasPermission } from "@/lib/auth/permissions";
 import { requirePermission } from "@/lib/auth/server";
+import { getProductTagOptions } from "@/lib/data-cache";
 import { prisma } from "@/lib/prisma";
 import { timeQuery } from "@/lib/query-timing";
 
@@ -164,21 +165,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     timeQuery("products:count", prisma.product.count({
       where: productWhere
     })),
-    timeQuery("products:tags", prisma.tag.findMany({
-      orderBy: {
-        name: "asc"
-      },
-      select: {
-        id: true,
-        name: true,
-        createdAt: true,
-        _count: {
-          select: {
-            products: true
-          }
-        }
-      }
-    }))
+    timeQuery("products:tags", getProductTagOptions())
   ]);
   const totalPages = Math.max(Math.ceil(productCount / pageSize), 1);
   const pageParams = {

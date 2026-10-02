@@ -385,6 +385,7 @@ model Customer {
   @@index([assignedStaffId])
   @@index([createdAt])
   @@index([archivedAt])
+  @@index([archivedAt, updatedAt])
 }
 
 model CustomerContact {
@@ -493,6 +494,7 @@ model Product {
   @@index([code])
   @@index([category])
   @@index([createdAt])
+  @@index([status, name])
 }
 
 model ProductColorVariant {
@@ -612,6 +614,8 @@ model Quotation {
   @@index([createdById])
   @@index([createdAt])
   @@index([updatedAt])
+  @@index([status, createdAt])
+  @@index([status, updatedAt])
 }
 
 model QuotationItem {
@@ -750,6 +754,9 @@ model Order {
   @@index([lastPaymentAt])
   @@index([createdAt])
   @@index([updatedAt])
+  @@index([status, createdAt])
+  @@index([paymentStatus, createdAt])
+  @@index([deliveryStatus, createdAt])
 }
 
 model OrderItem {
@@ -857,6 +864,7 @@ model Payment {
   @@index([receivedById])
   @@index([createdById])
   @@index([createdAt])
+  @@index([status, paymentDate])
 }
 
 model Delivery {
@@ -909,6 +917,8 @@ model Delivery {
   @@index([calendarSyncedUserId])
   @@index([calendarSyncStatus])
   @@index([createdAt])
+  @@index([status, scheduledDate])
+  @@index([assignedStaffId, scheduledDate])
 }
 
 model DeliveryItem {

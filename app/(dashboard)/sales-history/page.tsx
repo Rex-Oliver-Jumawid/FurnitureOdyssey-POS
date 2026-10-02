@@ -8,6 +8,7 @@ import { ReportDateRangeFilter } from "@/components/dashboard/report-date-range-
 import { StatusPill } from "@/components/ui/status-pill";
 import { hasPermission } from "@/lib/auth/permissions";
 import { requirePermission } from "@/lib/auth/server";
+import { getActiveStaffOptions } from "@/lib/data-cache";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import { getReportDateRange } from "@/lib/reporting/date-range";
@@ -264,18 +265,7 @@ export default async function SalesHistoryPage({ searchParams }: SalesHistoryPag
   const activeDateRange = view === "overview" ? overviewRange.dateRange : dateRange;
 
   const [staff, report] = await Promise.all([
-    prisma.userProfile.findMany({
-      where: {
-        status: "ACTIVE"
-      },
-      orderBy: {
-        displayName: "asc"
-      },
-      select: {
-        id: true,
-        displayName: true
-      }
-    }),
+    getActiveStaffOptions(),
     getReportData({
       view,
       query: activeQuery,

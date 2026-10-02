@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import type {
@@ -12,6 +12,7 @@ import type {
   QuotationItemType
 } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { hasPermission } from "@/lib/auth/permissions";
 import { requirePermission } from "@/lib/auth/server";
 import {
@@ -719,6 +720,7 @@ export async function convertQuotationToOrderAction(
 
   if (quotation.order) {
     revalidatePath("/orders");
+    revalidateTag(CACHE_TAGS.dashboard);
     revalidatePath("/quotations");
     revalidatePath(`/quotations/${quotation.id}`);
 
@@ -748,6 +750,8 @@ export async function convertQuotationToOrderAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/quotations");
   revalidatePath(`/quotations/${quotation.id}`);
   revalidatePath("/inquiries");
@@ -977,6 +981,8 @@ export async function createManualOrderAction(
 
   revalidatePath("/orders");
 
+  revalidateTag(CACHE_TAGS.dashboard);
+
   return {
     ok: true,
     message: `Manual order saved for ${customer.displayName}: ${order.orderNumber ?? order.id}.`
@@ -1131,6 +1137,8 @@ export async function updateOrderCustomerAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/customer-directory");
   revalidatePath("/sales-history");
 
@@ -1390,6 +1398,8 @@ export async function updateOrderItemsAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/payments");
   revalidatePath("/deliveries");
   revalidatePath("/documents");
@@ -1509,6 +1519,8 @@ export async function createPaymentAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/payments");
 
   return {
@@ -1589,6 +1601,8 @@ export async function updatePaymentDueTimingAction(
   });
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/payments");
 
   return {
@@ -1822,6 +1836,8 @@ export async function createDeliveryAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/deliveries");
 
   return {
@@ -1978,6 +1994,8 @@ export async function updateDeliveryProgressAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/deliveries");
 
   return {
@@ -2024,6 +2042,7 @@ export async function retryDeliveryCalendarSyncAction(formData: FormData) {
   const result = await updateDeliveryCalendarEvent(delivery.id);
   revalidatePath("/deliveries");
   revalidatePath("/orders");
+  revalidateTag(CACHE_TAGS.dashboard);
 
   const synced = result.targets.filter((t) => t.syncStatus === "SYNCED");
   const failed = result.targets.filter((t) => t.syncStatus === "FAILED");
@@ -2170,6 +2189,8 @@ export async function cancelOrderAction(
   );
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/deliveries");
   revalidatePath("/payments");
   revalidatePath("/documents");
@@ -2284,6 +2305,8 @@ export async function deleteOrderAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/deliveries");
   revalidatePath("/payments");
   revalidatePath("/documents");
@@ -2405,6 +2428,8 @@ export async function completeOrderAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
 
   return {
     ok: true,
@@ -2581,6 +2606,8 @@ export async function createOrderDocumentAction(
   }
 
   revalidatePath("/orders");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/documents");
 
   return {

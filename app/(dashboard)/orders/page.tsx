@@ -5,6 +5,7 @@ import { OrderWorkspace } from "@/components/dashboard/order-workspace";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { hasPermission } from "@/lib/auth/permissions";
 import { requirePermission } from "@/lib/auth/server";
+import { getActiveCustomerOptions, getActiveProductOptions, getDeliveryStaffOptions } from "@/lib/data-cache";
 import { prisma } from "@/lib/prisma";
 import {
   canCompleteOrder as canCompleteOrderWorkflow,
@@ -753,66 +754,9 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   });
 
   const [staff, customerOptions, productOptions, orderCount, orderMetrics, orders] = await Promise.all([
-    timeQuery("orders:staff-options", prisma.userProfile.findMany({
-      where: {
-        status: "ACTIVE",
-        role: {
-          in: ["ADMIN", "STAFF"]
-        },
-        OR: [
-          { role: "ADMIN" },
-          {
-            permissions: {
-              some: {
-                module: "DELIVERIES",
-                action: {
-                  in: ["VIEW", "CREATE", "UPDATE"]
-                },
-                allowed: true
-              }
-            }
-          }
-        ]
-      },
-      orderBy: {
-        displayName: "asc"
-      },
-      select: {
-        id: true,
-        displayName: true
-      }
-    })),
-    timeQuery("orders:customer-options", prisma.customer.findMany({
-      where: { archivedAt: null },
-      orderBy: { displayName: "asc" },
-      include: {
-        contacts: {
-          orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
-          take: 1
-        }
-      }
-    })),
-    timeQuery("orders:product-options", canViewProducts ? prisma.product.findMany({
-      where: { status: "ACTIVE" },
-      orderBy: { name: "asc" },
-      include: {
-        images: {
-          where: { colorVariantId: null },
-          orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
-          take: 1
-        },
-        colorVariants: {
-          where: { isActive: true },
-          orderBy: { sortOrder: "asc" },
-          include: {
-            images: {
-              orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
-              take: 1
-            }
-          }
-        }
-      }
-    }) : Promise.resolve([])),
+    timeQuery("orders:staff-options", getDeliveryStaffOptions()),
+    timeQuery("orders:customer-options", getActiveCustomerOptions()),
+    timeQuery("orders:product-options", canViewProducts ? getActiveProductOptions() : Promise.resolve([])),
     timeQuery("orders:count", prisma.order.count({
       where: orderWhere
     })),

@@ -2,11 +2,12 @@
 
 import { Prisma } from "@prisma/client";
 import type { ProductStatus } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { hasPermission } from "@/lib/auth/permissions";
 import { requireActiveUser, requirePermission } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { uploadFileToCloudinary } from "@/lib/uploads/server";
 import {
   createProductSchema,
@@ -434,6 +435,8 @@ export async function createProductAction(
         });
       } catch (error) {
         revalidatePath("/products");
+        revalidateTag(CACHE_TAGS.productOptions);
+        revalidateTag(CACHE_TAGS.productTags);
         revalidatePath("/quotations");
         revalidatePath("/orders");
         revalidatePath("/catalogue");
@@ -448,6 +451,10 @@ export async function createProductAction(
     }
 
     revalidatePath("/products");
+
+    revalidateTag(CACHE_TAGS.productOptions);
+
+    revalidateTag(CACHE_TAGS.productTags);
     revalidatePath("/quotations");
     revalidatePath("/orders");
     revalidatePath("/catalogue");
@@ -781,6 +788,8 @@ export async function updateProductAction(
         });
       } catch (error) {
         revalidatePath("/products");
+        revalidateTag(CACHE_TAGS.productOptions);
+        revalidateTag(CACHE_TAGS.productTags);
         revalidatePath("/quotations");
         revalidatePath("/orders");
         revalidatePath("/catalogue");
@@ -795,6 +804,10 @@ export async function updateProductAction(
     }
 
     revalidatePath("/products");
+
+    revalidateTag(CACHE_TAGS.productOptions);
+
+    revalidateTag(CACHE_TAGS.productTags);
     revalidatePath("/quotations");
     revalidatePath("/orders");
     revalidatePath("/catalogue");
@@ -858,6 +871,10 @@ export async function createTagAction(
     });
 
     revalidatePath("/products");
+
+    revalidateTag(CACHE_TAGS.productOptions);
+
+    revalidateTag(CACHE_TAGS.productTags);
     revalidatePath("/catalogue");
 
     return {
@@ -931,6 +948,10 @@ export async function updateTagAction(
     });
 
     revalidatePath("/products");
+
+    revalidateTag(CACHE_TAGS.productOptions);
+
+    revalidateTag(CACHE_TAGS.productTags);
     revalidatePath("/catalogue");
 
     return {
@@ -1013,6 +1034,10 @@ export async function deleteTagAction(
   });
 
   revalidatePath("/products");
+
+  revalidateTag(CACHE_TAGS.productOptions);
+
+  revalidateTag(CACHE_TAGS.productTags);
   revalidatePath("/catalogue");
 
   return {
@@ -1096,6 +1121,10 @@ export async function deleteProductAction(
   });
 
   revalidatePath("/products");
+
+  revalidateTag(CACHE_TAGS.productOptions);
+
+  revalidateTag(CACHE_TAGS.productTags);
   revalidatePath("/quotations");
   revalidatePath("/orders");
   revalidatePath("/catalogue");
@@ -1183,6 +1212,10 @@ export async function updateProductStatusAction(
   });
 
   revalidatePath("/products");
+
+  revalidateTag(CACHE_TAGS.productOptions);
+
+  revalidateTag(CACHE_TAGS.productTags);
   revalidatePath("/quotations");
   revalidatePath("/orders");
   revalidatePath("/catalogue");
@@ -1263,6 +1296,10 @@ export async function updateProductWebsiteVisibilityAction(
   });
 
   revalidatePath("/products");
+
+  revalidateTag(CACHE_TAGS.productOptions);
+
+  revalidateTag(CACHE_TAGS.productTags);
   revalidatePath("/quotations");
   revalidatePath("/orders");
   revalidatePath("/catalogue");
@@ -1382,6 +1419,10 @@ export async function uploadProductImageAction(formData: FormData): Promise<Acti
     });
 
     revalidatePath("/products");
+
+    revalidateTag(CACHE_TAGS.productOptions);
+
+    revalidateTag(CACHE_TAGS.productTags);
     revalidatePath("/quotations");
     revalidatePath("/orders");
     revalidatePath("/catalogue");
@@ -1467,6 +1508,10 @@ export async function setPrimaryProductImageAction(formData: FormData): Promise<
   });
 
   revalidatePath("/products");
+
+  revalidateTag(CACHE_TAGS.productOptions);
+
+  revalidateTag(CACHE_TAGS.productTags);
   revalidatePath("/quotations");
   revalidatePath("/orders");
 
@@ -1564,6 +1609,10 @@ export async function removeProductImageAction(formData: FormData): Promise<Acti
   });
 
   revalidatePath("/products");
+
+  revalidateTag(CACHE_TAGS.productOptions);
+
+  revalidateTag(CACHE_TAGS.productTags);
   revalidatePath("/quotations");
   revalidatePath("/orders");
 

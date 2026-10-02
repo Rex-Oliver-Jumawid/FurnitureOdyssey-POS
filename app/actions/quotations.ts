@@ -1,8 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { DiscountType, QuotationItemType, QuotationStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { hasPermission } from "@/lib/auth/permissions";
 import { requirePermission } from "@/lib/auth/server";
 import { convertAcceptedQuotationToOrderTx } from "@/app/actions/orders";
@@ -309,6 +310,8 @@ export async function createQuotationAction(
   });
 
   revalidatePath("/quotations");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath(`/quotations/${quotation.id}`);
   revalidatePath("/inquiries");
 
@@ -460,6 +463,8 @@ export async function updateDraftQuotationAction(
   });
 
   revalidatePath("/quotations");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath(`/quotations/${quotationId}`);
 
   return {
@@ -588,6 +593,8 @@ export async function updateQuotationStatusAction(
   }
 
   revalidatePath("/quotations");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath(`/quotations/${quotation.id}`);
   revalidatePath("/orders");
 
@@ -675,6 +682,8 @@ export async function deleteQuotationAction(
   });
 
   revalidatePath("/quotations");
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath(`/quotations/${quotation.id}`);
 
   return {

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { prisma } from "@/lib/prisma";
 import { requirePermission } from "@/lib/auth/server";
+import { getActiveCustomerOptions, getActiveStaffOptions } from "@/lib/data-cache";
 
 type InquiriesPageProps = {
   searchParams?: Promise<{
@@ -74,31 +75,8 @@ export default async function InquiriesPage({ searchParams }: InquiriesPageProps
         }
       }
     }),
-    prisma.customer.findMany({
-      where: {
-        archivedAt: null
-      },
-      orderBy: {
-        displayName: "asc"
-      },
-      select: {
-        id: true,
-        displayName: true,
-        companyName: true
-      }
-    }),
-    prisma.userProfile.findMany({
-      where: {
-        status: "ACTIVE"
-      },
-      orderBy: {
-        displayName: "asc"
-      },
-      select: {
-        id: true,
-        displayName: true
-      }
-    })
+    getActiveCustomerOptions(),
+    getActiveStaffOptions()
   ]);
 
   return (

@@ -1,6 +1,8 @@
-import type { Prisma } from "@prisma/client";
-import { canViewModule, isAdmin, type UserWithPermissions } from "@/lib/auth/permissions";
+import type { PermissionModule, Prisma } from "@prisma/client";
+import { unstable_cache } from "next/cache";
+import type { UserWithPermissions } from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { manilaDayRange, type ReportRangePreset } from "@/lib/reporting/date-range";
 
 const closedOrderStatuses = ["COMPLETED", "CANCELLED"] as const;
@@ -35,8 +37,13 @@ export type DashboardRecentActivity = {
   detail: string;
   href: string;
   timestamp: string;
+};
+
+type RecentCandidate = Omit<DashboardRecentActivity, "timestamp"> & {
   occurredAt: Date;
 };
+
+type DashboardUserContext = Pick<UserWithPermissions, "id" | "role" | "permissions">;
 
 type DashboardPermissions = {
   canViewCustomers: boolean;
@@ -45,8 +52,6 @@ type DashboardPermissions = {
   canViewPayments: boolean;
   canViewDeliveries: boolean;
 };
-
-type RecentCandidate = Omit<DashboardRecentActivity, "timestamp">;
 
 function daysAgo(date: Date, days: number) {
   const next = new Date(date);
@@ -471,36 +476,63 @@ function buildRecentActivity(candidates: RecentCandidate[]) {
   return candidates
     .sort((first, second) => second.occurredAt.getTime() - first.occurredAt.getTime())
     .slice(0, 3)
-    .map((candidate) => ({
+    .map(({ occurredAt, ...candidate }) => ({
       ...candidate,
-      timestamp: formatDateTime(candidate.occurredAt)
+      timestamp: formatDateTime(occurredAt)
     }));
 }
 
-export async function getDashboardOperations(
-  user: UserWithPermissions,
-  options: {
-    dateRange?: { gte?: Date; lte?: Date };
-    range?: ReportRangePreset;
-    rangeLabel?: string;
-    fromInput?: string;
-    toInput?: string;
-  } = {}
+type DashboardOptions = {
+  dateRange?: { gte?: Date; lte?: Date };
+  range?: ReportRangePreset;
+  rangeLabel?: string;
+  fromInput?: string;
+  toInput?: string;
+};
+
+type CachedDashboardOptions = {
+  dateRange?: {
+    gte?: string;
+    lte?: string;
+  };
+};
+
+function canViewDashboardModule(user: DashboardUserContext, module: PermissionModule) {
+  if (user.role === "ADMIN") {
+    return true;
+  }
+
+  return user.permissions.some(
+    (permission) =>
+      permission.module === module &&
+      permission.action === "VIEW" &&
+      permission.allowed
+  );
+}
+
+async function getDashboardOperationsUncached(
+  user: DashboardUserContext,
+  options: CachedDashboardOptions = {}
 ) {
   const todayRange = manilaDayRange();
-  const selectedDateRange = options.dateRange ?? todayRange.dateRange;
+  const selectedDateRange = options.dateRange
+    ? {
+        gte: options.dateRange.gte ? new Date(options.dateRange.gte) : undefined,
+        lte: options.dateRange.lte ? new Date(options.dateRange.lte) : undefined
+      }
+    : todayRange.dateRange;
   const now = new Date();
   const quotationAgingDate = daysAgo(now, 3);
-  const adminDashboard = isAdmin(user);
+  const adminDashboard = user.role === "ADMIN";
   const permissions: DashboardPermissions = {
-    canViewCustomers: canViewModule(user, "CUSTOMERS"),
-    canViewQuotations: canViewModule(user, "QUOTATIONS"),
-    canViewOrders: canViewModule(user, "ORDERS"),
-    canViewPayments: canViewModule(user, "PAYMENTS"),
-    canViewDeliveries: canViewModule(user, "DELIVERIES")
+    canViewCustomers: canViewDashboardModule(user, "CUSTOMERS"),
+    canViewQuotations: canViewDashboardModule(user, "QUOTATIONS"),
+    canViewOrders: canViewDashboardModule(user, "ORDERS"),
+    canViewPayments: canViewDashboardModule(user, "PAYMENTS"),
+    canViewDeliveries: canViewDashboardModule(user, "DELIVERIES")
   };
 
-  const limit = pLimit(5);
+  const limit = pLimit(8);
 
   const [
     openOrderCount,
@@ -955,4 +987,38 @@ export async function getDashboardOperations(
     }),
     recentActivity: buildRecentActivity(recentCandidates)
   };
+}
+
+
+const getCachedDashboardOperations = unstable_cache(
+  getDashboardOperationsUncached,
+  ["dashboard-operations-v1"],
+  {
+    revalidate: 10,
+    tags: [CACHE_TAGS.dashboard]
+  }
+);
+
+export async function getDashboardOperations(
+  user: UserWithPermissions,
+  options: DashboardOptions = {}
+) {
+  const context: DashboardUserContext = {
+    id: user.id,
+    role: user.role,
+    permissions: user.permissions.map((permission) => ({
+      module: permission.module,
+      action: permission.action,
+      allowed: permission.allowed
+    }))
+  };
+
+  return getCachedDashboardOperations(context, {
+    dateRange: options.dateRange
+      ? {
+          gte: options.dateRange.gte?.toISOString(),
+          lte: options.dateRange.lte?.toISOString()
+        }
+      : undefined
+  });
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type {
   ActivityAction,
   PermissionAction,
@@ -9,6 +9,7 @@ import type {
   UserStatus
 } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { requireAdmin } from "@/lib/auth/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createUserSchema, updateUserSchema } from "@/lib/validation/users";
@@ -164,6 +165,12 @@ export async function createUserAction(
   }
 
   revalidatePath("/users");
+
+  revalidateTag(CACHE_TAGS.activeStaff);
+
+  revalidateTag(CACHE_TAGS.deliveryStaff);
+
+  revalidateTag(CACHE_TAGS.dashboard);
   return {
     ok: true,
     message: "User login account created."
@@ -365,6 +372,12 @@ export async function updateUserAction(
   });
 
   revalidatePath("/users");
+
+  revalidateTag(CACHE_TAGS.activeStaff);
+
+  revalidateTag(CACHE_TAGS.deliveryStaff);
+
+  revalidateTag(CACHE_TAGS.dashboard);
   return {
     ok: true,
     message: "User profile updated.",
@@ -494,6 +507,12 @@ export async function deleteUserAction(
   });
 
   revalidatePath("/users");
+
+  revalidateTag(CACHE_TAGS.activeStaff);
+
+  revalidateTag(CACHE_TAGS.deliveryStaff);
+
+  revalidateTag(CACHE_TAGS.dashboard);
   return {
     ok: true,
     message: "User login access deleted and profile marked inactive."

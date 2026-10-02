@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type {
   CustomerContactType,
   CustomerType,
@@ -9,6 +9,7 @@ import type {
   InquiryStatus
 } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { requirePermission } from "@/lib/auth/server";
 import {
   createCustomerSchema,
@@ -151,6 +152,10 @@ export async function createCustomerAction(
   });
 
   revalidatePath("/customers");
+
+  revalidateTag(CACHE_TAGS.customerOptions);
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/quotations");
   revalidatePath("/orders");
   return {
@@ -265,6 +270,10 @@ export async function updateCustomerAction(
   }
 
   revalidatePath("/customers");
+
+  revalidateTag(CACHE_TAGS.customerOptions);
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/quotations");
   revalidatePath("/orders");
   return {
@@ -341,6 +350,10 @@ export async function deleteCustomerAction(
   });
 
   revalidatePath("/customers");
+
+  revalidateTag(CACHE_TAGS.customerOptions);
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/quotations");
   revalidatePath("/orders");
   return {
@@ -441,6 +454,10 @@ export async function createInquiryAction(
   });
 
   revalidatePath("/customers");
+
+  revalidateTag(CACHE_TAGS.customerOptions);
+
+  revalidateTag(CACHE_TAGS.dashboard);
   revalidatePath("/inquiries");
   return {
     ok: true,

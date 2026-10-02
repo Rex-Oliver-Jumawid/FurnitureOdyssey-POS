@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/select";
 import { hasPermission } from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
 import { requirePermission } from "@/lib/auth/server";
+import { getActiveStaffOptions } from "@/lib/data-cache";
 import { timeQuery } from "@/lib/query-timing";
 
 type CustomersPageProps = {
@@ -162,18 +163,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
     timeQuery("customers:count", prisma.customer.count({
       where: customerWhere
     })),
-    timeQuery("customers:staff-options", prisma.userProfile.findMany({
-      where: {
-        status: "ACTIVE"
-      },
-      orderBy: {
-        displayName: "asc"
-      },
-      select: {
-        id: true,
-        displayName: true
-      }
-    }))
+    timeQuery("customers:staff-options", getActiveStaffOptions())
   ]);
   const totalPages = Math.max(Math.ceil(customerCount / pageSize), 1);
   const pageParams = {
