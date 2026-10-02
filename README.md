@@ -95,7 +95,7 @@ FIRST_ADMIN_NAME="Furniture Odyssey Admin"
 PORTFOLIO_DEMO_MODE="false"
 ```
 
-Set `PORTFOLIO_DEMO_MODE="true"` only on a public showcase deployment. In that mode, visitors bypass the login screen and receive a synthetic read-only Staff session with access to operational views and generated document exports, while Users, Settings, and mutation permissions remain unavailable.
+The Vercel production deployment defaults to portfolio demo mode when `PORTFOLIO_DEMO_MODE` is unset. In demo mode, visitors bypass the login screen and receive a synthetic read-only Staff session with access to operational views and generated document exports, while Users, Settings, and mutation permissions remain unavailable. Set `PORTFOLIO_DEMO_MODE="false"` explicitly on any production deployment that should keep the normal login gate.
 
 `FIRST_ADMIN_EMAIL`, `FIRST_ADMIN_PASSWORD`, and `FIRST_ADMIN_NAME` are used by the seed script to create or update the first active local Admin. `FIRST_ADMIN_AUTH_USER_ID` is optional; leave it empty for normal local setup so the seed can create or find the Supabase Auth user automatically. Set it only when you intentionally want to bind the Admin profile to a specific existing Supabase Auth user ID.
 
