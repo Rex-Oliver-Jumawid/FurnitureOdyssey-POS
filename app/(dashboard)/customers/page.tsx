@@ -192,12 +192,12 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
       >
         {canCreateCustomers ? <CustomerCreateButton /> : null}
       </PageHeader>
-      <form className="mb-4 grid gap-3 rounded-lg border border-border bg-panel p-3 md:grid-cols-[minmax(260px,1fr)_170px_190px_170px_auto]">
+      <form className="mb-4 grid gap-3 rounded-lg border border-border bg-panel p-3 md:grid-cols-2 xl:grid-cols-[minmax(260px,1fr)_150px_170px_150px_auto]">
         <DynamicSearchInput
           name="q"
           defaultValue={params.q ?? ""}
           placeholder="Search customer name, company, phone, Viber, Facebook, or email"
-          className="md:min-w-[320px]"
+          className="min-w-0 md:col-span-2 xl:col-span-1"
         />
         <Select name="type" defaultValue={params.type ?? ""}>
           <option value="">All types</option>
@@ -223,7 +223,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
           <option value="REFERRAL">Referral</option>
           <option value="OTHER">Other</option>
         </Select>
-        <Button type="submit" variant="secondary">
+        <Button type="submit" variant="secondary" className="w-full md:col-span-2 xl:col-span-1 xl:w-auto">
           Filter
         </Button>
       </form>

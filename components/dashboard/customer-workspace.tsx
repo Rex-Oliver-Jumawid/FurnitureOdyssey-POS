@@ -1061,7 +1061,7 @@ export function CustomerWorkspace({
 
       <section className="studio-card">
         <div className="overflow-x-auto">
-          <table className="studio-table w-full min-w-[900px] text-left text-sm">
+          <table className="studio-table w-full min-w-[780px] text-left text-sm xl:min-w-[900px]">
             <thead className="border-b border-border text-xs uppercase text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Customer</th>

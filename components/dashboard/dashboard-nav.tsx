@@ -15,7 +15,7 @@ export function DashboardNav({ allowedHrefs }: DashboardNavProps) {
   const visibleItems = dashboardNavItems.filter((item) => allowedHrefs.includes(item.href));
 
   return (
-    <nav className="flex gap-1 overflow-x-auto px-3 py-3 lg:block lg:space-y-1.5 lg:overflow-visible">
+    <nav className="flex gap-1 overflow-x-auto px-3 py-3 lg:block lg:space-y-1 lg:overflow-visible lg:px-2 lg:py-2 xl:space-y-1.5 xl:px-3 xl:py-3">
       {visibleItems.map((item) => {
         const Icon = item.icon;
         const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -25,7 +25,7 @@ export function DashboardNav({ allowedHrefs }: DashboardNavProps) {
             key={item.href}
             href={item.href}
             className={cn(
-              "inline-flex min-h-10 shrink-0 items-center gap-3 rounded-lg px-3 text-sm font-medium transition lg:flex",
+              "inline-flex min-h-10 shrink-0 items-center gap-3 rounded-lg px-3 text-sm font-medium transition lg:flex lg:min-h-9 lg:gap-2.5 lg:px-2.5 xl:min-h-10 xl:gap-3 xl:px-3",
               isActive
                 ? "bg-soft-accent text-foreground ring-1 ring-border"
                 : "text-muted-foreground hover:bg-muted/55 hover:text-foreground"
