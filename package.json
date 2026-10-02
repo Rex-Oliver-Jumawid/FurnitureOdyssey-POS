@@ -17,6 +17,7 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "seed": "tsx prisma/seed.ts",
+    "seed:demo": "tsx prisma/seed-demo.ts",
     "seed:upload-images": "tsx prisma/upload-seed-images.ts",
     "pilot:migrate": "bash scripts/migrate-pilot.sh",
     "pilot:seed": "bash scripts/seed-pilot.sh"
