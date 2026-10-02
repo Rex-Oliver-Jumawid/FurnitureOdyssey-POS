@@ -1,5 +1,8 @@
+import { DelayedRouteFallback } from "@/components/dashboard/delayed-route-fallback";
+
 export default function SalesHistoryLoading() {
   return (
+    <DelayedRouteFallback>
     <div className="space-y-3">
       <div className="space-y-2 pb-3">
         <div className="h-7 w-40 animate-pulse rounded bg-muted" />
@@ -60,5 +63,6 @@ export default function SalesHistoryLoading() {
         </div>
       </section>
     </div>
+    </DelayedRouteFallback>
   );
 }
