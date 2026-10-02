@@ -7,6 +7,7 @@ import { DashboardNav } from "@/components/dashboard/dashboard-nav";
 import { dashboardNavItems } from "@/lib/auth/navigation";
 import { canAccessUsersPage } from "@/lib/auth/calendar-access";
 import { canViewModule, type UserWithPermissions } from "@/lib/auth/permissions";
+import { isPortfolioDemoMode } from "@/lib/demo-mode";
 
 type DashboardShellProps = {
   user: UserWithPermissions;
@@ -14,6 +15,7 @@ type DashboardShellProps = {
 };
 
 export function DashboardShell({ user, children }: DashboardShellProps) {
+  const portfolioDemoMode = isPortfolioDemoMode();
   const visibleItems = dashboardNavItems.filter((item) => {
     if (item.href === "/users") {
       return canAccessUsersPage(user);
@@ -48,14 +50,22 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
         <header className="sticky top-0 z-30 flex min-h-14 items-center justify-between border-b border-border bg-panel px-4 sm:px-5 lg:px-6 xl:min-h-16 xl:px-8">
           <div>
             <p className="text-sm font-medium">{user.displayName}</p>
-            <p className="text-xs text-muted-foreground">{user.role}</p>
+            <p className="text-xs text-muted-foreground">
+              {portfolioDemoMode ? "Read-only portfolio access" : user.role}
+            </p>
           </div>
-          <form action={signOut}>
-            <Button type="submit" variant="secondary">
-              <LogOut className="h-4 w-4" />
-              Sign out
-            </Button>
-          </form>
+          {portfolioDemoMode ? (
+            <span className="rounded-full border border-border bg-muted/55 px-3 py-1 text-xs font-medium text-muted-foreground">
+              Demo mode
+            </span>
+          ) : (
+            <form action={signOut}>
+              <Button type="submit" variant="secondary">
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </Button>
+            </form>
+          )}
         </header>
         <main className="min-w-0 px-4 py-5 sm:px-5 lg:px-6 lg:py-6 xl:px-8">{children}</main>
       </div>
