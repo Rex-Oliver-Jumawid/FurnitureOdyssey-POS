@@ -31,11 +31,19 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(
-    searchParams.get("error") === "inactive"
-      ? "Your account is not active. Ask an Admin to review your access."
-      : null
-  );
+  const [error, setError] = useState<string | null>(() => {
+    const errorCode = searchParams.get("error");
+
+    if (errorCode === "inactive") {
+      return "Your account is not active. Ask an Admin to review your access.";
+    }
+
+    if (errorCode === "demo-unavailable") {
+      return "The portfolio demo sign-in is temporarily unavailable.";
+    }
+
+    return null;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
