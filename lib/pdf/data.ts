@@ -25,6 +25,7 @@ import {
   getAppSettings
 } from "@/lib/settings/get-settings";
 import { defaultPdfLogoSource } from "@/lib/pdf/assets";
+import { quotationItemImageUrl, quotationPdfItemImages } from "@/lib/pdf/item-images";
 import type { AppSettingsInput } from "@/lib/validation/settings";
 import type {
   OperationalPdfData,
@@ -397,6 +398,19 @@ export async function getQuotationPdfData(quotationId: string): Promise<Operatio
         include: {
           images: {
             orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }]
+          },
+          product: {
+            select: {
+              images: {
+                orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }, { createdAt: "asc" }],
+                select: {
+                  secureUrl: true,
+                  isPrimary: true,
+                  sortOrder: true,
+                  colorVariantId: true
+                }
+              }
+            }
           }
         }
       },
@@ -418,9 +432,15 @@ export async function getQuotationPdfData(quotationId: string): Promise<Operatio
 
   const settings = await getAppSettings();
   const company = companyForPdf(settings);
+  const itemImageUrls = await quotationPdfItemImages(
+    quotation.items.map((item) =>
+      quotationItemImageUrl(item.images, item.product?.images ?? [], item.snapshotVariantId)
+    )
+  );
 
   return {
     kind: "quotation",
+    quotationStatus: quotation.status,
     title: "Quotation",
     subtitle: "Furniture quotation for review and approval",
     filename: generatedFilename("quotation", quotation.quotationNumber ?? "not-assigned"),
@@ -458,7 +478,7 @@ export async function getQuotationPdfData(quotationId: string): Promise<Operatio
     ],
     tableCurrency: quotation.currency,
     totals: quotationTotals(quotation),
-    items: quotation.items.map((item) => ({
+    items: quotation.items.map((item, index) => ({
       code: item.snapshotProductCode,
       name: item.itemName,
       description: [
@@ -489,7 +509,7 @@ export async function getQuotationPdfData(quotationId: string): Promise<Operatio
       total: formatMoney(Number(item.lineTotal), quotation.currency),
       totalCompact: formatMoneyAmount(safeNumber(item.lineTotal)),
       notes: item.customerNotes,
-      imageUrl: primaryImage(item.images)
+      imageUrl: itemImageUrls[index]
     })),
     notes: quotation.customerNotes,
     paymentInstructions: settings.payment.defaultPaymentInstructions,

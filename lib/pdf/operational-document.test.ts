@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { defaultPdfLogoPath, defaultPdfLogoSource } from "@/lib/pdf/assets";
 import { companyForPdf } from "@/lib/pdf/data";
-import { demoQuotationPaymentTerms, isDemoQuotationFilename } from "@/lib/pdf/demo-quotation-content";
+import { demoQuotationPaymentTerms, isDemoQuotationFilename, shouldUseSampleQuotationDetails } from "@/lib/pdf/demo-quotation-content";
 import { formatMoney, shouldDisplayPdfAmountRow } from "@/lib/pdf/formatters";
 import { renderOperationalPdf, renderQuotationPdf } from "@/lib/pdf/render";
 import { defaultAppSettings, defaultPaymentSettings } from "@/lib/settings/get-settings";
@@ -270,6 +270,25 @@ test("quotation layout uses configurable terms without removing prepared by", ()
   assert.match(source, /<DreamHomePreparedBy demo=\{isDemoQuotation\} \/>/);
 });
 
+test("draft quotation PDFs use sample terms regardless of number, and sent or accepted quotations retain actual terms", async () => {
+  assert.equal(shouldUseSampleQuotationDetails("DRAFT", "quotation-QT-2026-000002-2026-10-16.pdf"), true);
+  assert.equal(shouldUseSampleQuotationDetails("SENT", "quotation-QT-2026-000002-2026-10-16.pdf"), false);
+  assert.equal(shouldUseSampleQuotationDetails("ACCEPTED", "quotation-QT-2026-000002-2026-10-16.pdf"), false);
+  assert.equal(shouldUseSampleQuotationDetails("ACCEPTED", "quotation-QUO-DEMO-1001-2026-10-16.pdf"), true);
+
+  const draftPdf = await renderQuotationPdf({
+    ...sampleQuotationData(),
+    quotationStatus: "DRAFT",
+    filename: "quotation-QT-2026-000002-2026-10-16.pdf"
+  });
+  assert.equal(draftPdf.subarray(0, 5).toString(), "%PDF-");
+
+  const quotationSource = readFileSync("lib/pdf/quotation-document.tsx", "utf8");
+  const pdfDataSource = readFileSync("lib/pdf/data.ts", "utf8");
+  assert.match(quotationSource, /shouldUseSampleQuotationDetails\(data\.quotationStatus, data\.filename\)/);
+  assert.match(pdfDataSource, /quotationStatus: quotation\.status/);
+});
+
 test("seeded demo quotation PDFs replace payment details and signature with sample content", async () => {
   assert.equal(isDemoQuotationFilename("quotation-QUO-DEMO-1001-2026-10-16.pdf"), true);
   assert.equal(isDemoQuotationFilename("quotation-QT-1001-2026-10-16.pdf"), false);
@@ -289,6 +308,23 @@ test("seeded demo quotation PDFs replace payment details and signature with samp
     filename: "quotation-QUO-DEMO-1001-2026-10-16.pdf"
   });
   assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
+});
+
+test("quotation PDF can render an embedded item photo", async () => {
+  const pdf = await renderQuotationPdf({
+    ...sampleQuotationData(),
+    quotationStatus: "SENT",
+    filename: "quotation-QT-2026-000001-2026-10-16.pdf",
+    items: [{
+      name: "Tolix Chair",
+      quantity: "6",
+      unitPrice: "PHP 1,500.00",
+      total: "PHP 9,000.00",
+      imageUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAEklEQVR4nGNkaGCAAyYGBmI4ABoEAIhjNExLAAAAAElFTkSuQmCC"
+    }]
+  });
+  assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
+  assert.match(pdf.toString("latin1"), /\/Subtype\s*\/Image\b/);
 });
 
 test("quotation PDF renders customer address between issued row and item table only when present", () => {

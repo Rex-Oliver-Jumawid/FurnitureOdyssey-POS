@@ -55,6 +55,7 @@ export type PdfDocumentTermsBlock = {
 
 export type OperationalPdfData = {
   kind: OperationalPdfKind;
+  quotationStatus?: string;
   title: string;
   subtitle?: string;
   filename: string;
