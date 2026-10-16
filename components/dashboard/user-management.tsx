@@ -260,7 +260,7 @@ function PermissionEditor({
                         checked={checked}
                         disabled={isAdmin}
                         onChange={() => toggle(typedModule, action)}
-                        className="h-4 w-4 accent-[hsl(var(--primary))] disabled:cursor-not-allowed"
+                        className="h-4 w-4 accent-primary disabled:cursor-not-allowed"
                       />
                       <span className="capitalize">{action.toLowerCase()}</span>
                     </label>
@@ -405,7 +405,7 @@ function UserForm({
               name="canLinkGoogleCalendar"
               value="true"
               defaultChecked={user?.canLinkGoogleCalendar ?? false}
-              className="mt-0.5 h-4 w-4 accent-[hsl(var(--primary))]"
+              className="mt-0.5 h-4 w-4 accent-primary"
             />
             <span>
               <span className="block font-semibold">Allow Google Calendar integration</span>
