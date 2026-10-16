@@ -9,7 +9,7 @@ import {
   DreamHomePolicies,
   DreamHomePreparedBy
 } from "@/lib/pdf/dream-home-layout";
-import { demoQuotationPaymentTerms, isDemoQuotationFilename } from "@/lib/pdf/demo-quotation-content";
+import { demoQuotationPaymentTerms, shouldUseSampleQuotationDetails } from "@/lib/pdf/demo-quotation-content";
 import { hasMoney, isPresentPdfText, shouldDisplayPdfAmountRow } from "@/lib/pdf/formatters";
 import { PdfPaymentTermsBlockView } from "@/lib/pdf/payment-terms-block";
 import type { OperationalPdfData, PdfItemRow, PdfSummaryRow } from "@/lib/pdf/types";
@@ -209,7 +209,7 @@ export function QuotationPdfDocument({ data }: { data: OperationalPdfData }) {
   const customerAddress = data.customer.address?.trim();
   const hasAnyItemDiscount = hasDiscountedItems(data.items);
   const tableCurrency = tableCurrencyLabel(data);
-  const isDemoQuotation = isDemoQuotationFilename(data.filename);
+  const isDemoQuotation = shouldUseSampleQuotationDetails(data.quotationStatus, data.filename);
   const paymentTermsBlock = isDemoQuotation ? demoQuotationPaymentTerms : data.paymentTermsBlock;
 
   return (
