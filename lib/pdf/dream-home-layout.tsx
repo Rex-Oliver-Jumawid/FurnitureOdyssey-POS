@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import React from "react";
-import { Font, Image, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Font, G, Image, Path, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
 import type { OperationalPdfKind } from "@/lib/pdf/types";
 
 export const dreamHomeBrand = {
@@ -177,13 +177,6 @@ export const dreamHomeSharedStyles = StyleSheet.create({
     width: 110,
     height: 68
   },
-  demoSignatureNotice: {
-    position: "absolute",
-    top: 24,
-    fontSize: 7,
-    color: dreamHomeColors.muted,
-    textAlign: "center"
-  },
   preparedName: {
     marginTop: 45,
     fontWeight: 700,
@@ -251,7 +244,7 @@ export function DreamHomePreparedBy({
       <Text style={dreamHomeSharedStyles.preparedLabel}>PREPARED BY:</Text>
       <View style={compact ? [dreamHomeSharedStyles.signatureArea, dreamHomeSharedStyles.compactSignatureArea] : dreamHomeSharedStyles.signatureArea} wrap={false}>
         {demo ? (
-          <Text style={dreamHomeSharedStyles.demoSignatureNotice}>DEMO - NO SIGNATURE</Text>
+          <DemoSignature compact={compact} />
         ) : dreamHomeSignatureSource ? (
           // React-PDF Image does not expose an alt prop in its TypeScript API.
           // eslint-disable-next-line jsx-a11y/alt-text
@@ -263,6 +256,28 @@ export function DreamHomePreparedBy({
         <Text style={dreamHomeSharedStyles.preparedSubtitle}>{demo ? "Demo Furniture Store" : dreamHomeBrand.preparedBySubtitle}</Text>
       </View>
     </View>
+  );
+}
+
+// This fictional, hand-drawn vector signature is used only on demo/draft quotations.
+// Keep the real store signature reserved for non-demo PDF documents.
+function DemoSignature({ compact }: { compact: boolean }) {
+  return (
+    <Svg
+      width={compact ? 110 : 140}
+      height={compact ? 68 : 87}
+      viewBox="0 6 140 87"
+      style={compact ? [dreamHomeSharedStyles.signature, dreamHomeSharedStyles.compactSignature] : dreamHomeSharedStyles.signature}
+    >
+      <G fill="none" stroke="#25344b" strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M36 16 C30 10 18 13 18 21 C18 28 34 25 35 31 C37 41 18 43 12 37" strokeWidth={2.3} />
+        <Path d="M45 27 C37 30 37 37 43 37 C48 37 51 28 47 27 C44 26 42 33 45 36 C48 38 53 33 56 28" strokeWidth={1.9} />
+        <Path d="M59 28 C56 36 58 37 62 32 C69 23 68 37 70 35 C75 29 78 25 80 28 C82 31 77 37 84 34" strokeWidth={1.9} />
+        <Path d="M96 16 C94 23 91 35 91 38 M90 20 C95 14 103 13 108 18 C112 24 104 29 96 28 C103 27 108 36 115 37" strokeWidth={2.2} />
+        <Path d="M120 36 l1 -1" strokeWidth={2} />
+        <Path d="M25 46 C47 41 70 44 93 42 C107 41 124 40 130 37" strokeWidth={1.05} />
+      </G>
+    </Svg>
   );
 }
 
