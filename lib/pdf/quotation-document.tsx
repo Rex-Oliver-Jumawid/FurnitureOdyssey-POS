@@ -121,10 +121,10 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   itemImage: {
-    width: 28,
-    height: 28,
-    objectFit: "cover",
-    marginRight: 6,
+    width: 42,
+    height: 42,
+    objectFit: "contain",
+    marginRight: 8,
     border: `1px solid ${border}`
   },
   itemBody: {
