@@ -11,3 +11,4 @@ server.js
 prisma/dev.db
 images/
 prisma/seed-data/
+.DS_Store
