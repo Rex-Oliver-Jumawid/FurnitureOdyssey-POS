@@ -14,9 +14,6 @@ type QuotationDetailPageProps = {
   }>;
 };
 
-const quotationDetailItemGridClass =
-  "md:grid-cols-[64px_minmax(110px,150px)_96px_minmax(0,1fr)_44px_88px_80px_96px]";
-
 function formatMoney(value: unknown) {
   return new Intl.NumberFormat("en-PH", {
     style: "currency",
@@ -239,88 +236,61 @@ export default async function QuotationDetailPage({ params }: QuotationDetailPag
               <p className="studio-kicker">Items</p>
               <h2 className="text-sm font-semibold">Quoted items</h2>
             </div>
-            <div className="min-w-0 max-w-full">
-              <div
-                className={`hidden gap-3 border-b border-border px-4 py-3 text-xs font-medium uppercase text-muted-foreground md:grid ${quotationDetailItemGridClass}`}
-              >
-                <span>Image</span>
-                <span>Item</span>
-                <span>Product code</span>
-                <span>Description / specs</span>
-                <span className="text-right">Qty</span>
-                <span className="text-right">Unit price</span>
-                <span className="text-right">Discount</span>
-                <span className="text-right">Line total</span>
-              </div>
-              <div className="divide-y divide-border">
-                {quotation.items.map((item) => {
-                  const image = quotationItemImage(item);
+            <div className="min-w-0 divide-y divide-border">
+              {quotation.items.map((item) => {
+                const image = quotationItemImage(item);
+                const description = itemDescription(item);
 
-                  return (
-                    <div
-                      key={item.id}
-                      className={`grid min-w-0 grid-cols-[56px_minmax(0,1fr)] gap-3 px-4 py-4 text-sm md:items-start ${quotationDetailItemGridClass}`}
-                    >
+                return (
+                  <article key={item.id} className="min-w-0 p-4 sm:p-5">
+                    <div className="flex min-w-0 items-start gap-4">
                       <div
                         role={image.secureUrl ? "img" : undefined}
                         aria-label={image.secureUrl ? image.altText : undefined}
-                        className="flex h-12 w-12 items-center justify-center rounded-md border border-border bg-soft-accent/40 bg-contain bg-center bg-no-repeat text-muted-foreground"
+                        className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-border bg-soft-accent/40 bg-contain bg-center bg-no-repeat text-muted-foreground"
                         style={image.secureUrl ? { backgroundImage: `url("${image.secureUrl}")` } : undefined}
                       >
-                        {!image.secureUrl ? <ImagePlus className="h-4 w-4" /> : null}
+                        {!image.secureUrl ? <ImagePlus className="h-5 w-5" /> : null}
                       </div>
-                      <div className="min-w-0 font-medium">
-                        <span className="block max-w-full whitespace-normal break-words">{item.itemName}</span>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="break-words text-sm font-semibold">{item.itemName}</h3>
+                        <p className="mt-1 break-words text-xs text-muted-foreground">
+                          {item.snapshotProductCode ? `Product code: ${item.snapshotProductCode}` : "Custom item"}
+                        </p>
+                        {description ? (
+                          <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-5 text-muted-foreground">
+                            {description}
+                          </p>
+                        ) : null}
                         {quotation.needsAssembly ? (
-                          <span className="mt-1 block text-xs font-normal text-muted-foreground md:hidden">
+                          <p className="mt-2 text-xs text-muted-foreground">
                             Assemble: {item.requiresAssembly ? "Yes" : "No"}
-                          </span>
+                          </p>
                         ) : null}
                       </div>
-                      <div className="col-span-2 min-w-0 text-muted-foreground md:col-span-1">
-                        <span className="mb-1 block text-xs font-semibold uppercase text-muted-foreground md:hidden">
-                          Product code
-                        </span>
-                        <span className="block max-w-full whitespace-normal break-words">
-                          {item.snapshotProductCode ?? "Custom"}
-                        </span>
-                      </div>
-                      <div className="col-span-2 min-w-0 text-muted-foreground md:col-span-1">
-                        <span className="mb-1 block text-xs font-semibold uppercase text-muted-foreground md:hidden">
-                          Description / specs
-                        </span>
-                        <span className="block max-w-full whitespace-pre-wrap break-words">
-                          {itemDescription(item) || "No description"}
-                        </span>
-                      </div>
-                      <div className="text-right tabular-nums">
-                        <span className="block text-xs font-semibold uppercase text-muted-foreground md:hidden">
-                          Qty
-                        </span>
-                        <span className="whitespace-nowrap">{formatQuantity(item.quantity)}</span>
-                      </div>
-                      <div className="text-right tabular-nums">
-                        <span className="block text-xs font-semibold uppercase text-muted-foreground md:hidden">
-                          Unit
-                        </span>
-                        <span className="whitespace-nowrap">{formatMoney(item.unitPrice)}</span>
-                      </div>
-                      <div className="text-right tabular-nums">
-                        <span className="block text-xs font-semibold uppercase text-muted-foreground md:hidden">
-                          Discount
-                        </span>
-                        <span className="whitespace-nowrap">{formatMoney(item.discountAmount)}</span>
-                      </div>
-                      <div className="text-right font-medium tabular-nums">
-                        <span className="block text-xs font-semibold uppercase text-muted-foreground md:hidden">
-                          Total
-                        </span>
-                        <span className="whitespace-nowrap">{formatMoney(item.lineTotal)}</span>
-                      </div>
                     </div>
-                  );
-                })}
-              </div>
+
+                    <dl className="mt-4 grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 rounded-lg bg-soft-accent/40 p-3 sm:grid-cols-4">
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-muted-foreground">Quantity</dt>
+                        <dd className="mt-1 text-sm font-semibold tabular-nums">{formatQuantity(item.quantity)}</dd>
+                      </div>
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-muted-foreground">Unit price</dt>
+                        <dd className="mt-1 text-sm font-semibold tabular-nums">{formatMoney(item.unitPrice)}</dd>
+                      </div>
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-muted-foreground">Discount</dt>
+                        <dd className="mt-1 text-sm font-semibold tabular-nums">{formatMoney(item.discountAmount)}</dd>
+                      </div>
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-muted-foreground">Line total</dt>
+                        <dd className="mt-1 text-sm font-bold tabular-nums">{formatMoney(item.lineTotal)}</dd>
+                      </div>
+                    </dl>
+                  </article>
+                );
+              })}
             </div>
           </section>
 
