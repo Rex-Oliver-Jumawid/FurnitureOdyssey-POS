@@ -177,6 +177,13 @@ export const dreamHomeSharedStyles = StyleSheet.create({
     width: 110,
     height: 68
   },
+  demoSignatureNotice: {
+    position: "absolute",
+    top: 24,
+    fontSize: 7,
+    color: dreamHomeColors.muted,
+    textAlign: "center"
+  },
   preparedName: {
     marginTop: 45,
     fontWeight: 700,
@@ -232,20 +239,28 @@ export function DreamHomeHeader({
   );
 }
 
-export function DreamHomePreparedBy({ compact = false }: { compact?: boolean }) {
+export function DreamHomePreparedBy({
+  compact = false,
+  demo = false
+}: {
+  compact?: boolean;
+  demo?: boolean;
+}) {
   return (
     <View style={compact ? [dreamHomeSharedStyles.preparedBy, dreamHomeSharedStyles.compactPreparedBy] : dreamHomeSharedStyles.preparedBy} wrap={false}>
       <Text style={dreamHomeSharedStyles.preparedLabel}>PREPARED BY:</Text>
       <View style={compact ? [dreamHomeSharedStyles.signatureArea, dreamHomeSharedStyles.compactSignatureArea] : dreamHomeSharedStyles.signatureArea} wrap={false}>
-        {dreamHomeSignatureSource ? (
+        {demo ? (
+          <Text style={dreamHomeSharedStyles.demoSignatureNotice}>DEMO - NO SIGNATURE</Text>
+        ) : dreamHomeSignatureSource ? (
           // React-PDF Image does not expose an alt prop in its TypeScript API.
           // eslint-disable-next-line jsx-a11y/alt-text
           <Image src={dreamHomeSignatureSource} style={compact ? [dreamHomeSharedStyles.signature, dreamHomeSharedStyles.compactSignature] : dreamHomeSharedStyles.signature} />
         ) : null}
         <Text style={compact ? [dreamHomeSharedStyles.preparedName, dreamHomeSharedStyles.compactPreparedName] : dreamHomeSharedStyles.preparedName}>
-          {dreamHomeBrand.preparedBy}
+          {demo ? "Sample Representative" : dreamHomeBrand.preparedBy}
         </Text>
-        <Text style={dreamHomeSharedStyles.preparedSubtitle}>{dreamHomeBrand.preparedBySubtitle}</Text>
+        <Text style={dreamHomeSharedStyles.preparedSubtitle}>{demo ? "Demo Furniture Store" : dreamHomeBrand.preparedBySubtitle}</Text>
       </View>
     </View>
   );
