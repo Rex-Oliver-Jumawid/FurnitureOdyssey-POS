@@ -1,6 +1,6 @@
 import type { PdfPaymentTermsBlock } from "@/lib/pdf/types";
 
-// Keep placeholder payment details confined to generated PDFs for seeded demo quotations.
+// Use sample payment and preparer details for drafts and seeded demo quotations.
 export const demoQuotationPaymentTerms: PdfPaymentTermsBlock = {
   policyTitle: "Payment Policy and Delivery Options",
   policyBullets: [
@@ -18,4 +18,8 @@ export const demoQuotationPaymentTerms: PdfPaymentTermsBlock = {
 
 export function isDemoQuotationFilename(filename: string) {
   return /(?:^|[-_])DEMO(?:[-_.]|$)/i.test(filename);
+}
+
+export function shouldUseSampleQuotationDetails(status: string | undefined, filename: string) {
+  return status === "DRAFT" || isDemoQuotationFilename(filename);
 }
