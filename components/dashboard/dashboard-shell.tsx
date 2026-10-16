@@ -31,7 +31,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
       <aside className="border-b border-border bg-panel lg:sticky lg:top-0 lg:h-dvh lg:overflow-y-auto lg:border-b-0 lg:border-r">
         <div className="flex min-h-16 items-center gap-3 border-b border-border px-4 xl:min-h-20 xl:px-5">
           <Image
-            src="/brand-mark.webp"
+            src="/brand-mark.png"
             alt="Furniture Odyssey logo"
             width={48}
             height={48}

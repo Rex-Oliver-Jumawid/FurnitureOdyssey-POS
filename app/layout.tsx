@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   title: "Furniture Odyssey Operations",
   description: "Internal sales operations dashboard for Furniture Odyssey.",
   icons: {
-    icon: [{ url: "/brand-mark.webp", type: "image/webp", sizes: "96x96" }],
-    apple: [{ url: "/brand-mark.webp", sizes: "96x96" }]
+    icon: [{ url: "/brand-mark.png", type: "image/png", sizes: "1277x1231" }],
+    apple: [{ url: "/brand-mark.png", sizes: "1277x1231" }]
   }
 };
 

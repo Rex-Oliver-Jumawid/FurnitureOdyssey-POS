@@ -9,7 +9,7 @@ export default function LoginPage() {
         <section className="w-full max-w-md">
           <div className="mb-6 text-center">
             <Image
-              src="/brand-mark.webp"
+              src="/brand-mark.png"
               alt="Prometheus and Furniture Odyssey"
               width={88}
               height={88}
