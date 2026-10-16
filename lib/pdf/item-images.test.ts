@@ -23,12 +23,13 @@ test("PDF quotation images fall back to matching variant then general product im
   assert.equal(quotationItemImageUrl([], catalog, "blue"), catalog[1].secureUrl);
   assert.equal(quotationItemImageUrl([], catalog, "missing"), cloudinaryUrl);
   assert.equal(quotationItemImageUrl([], [], null), null);
+  assert.equal(quotationItemImageUrl([], [catalog[0]], null), catalog[0].secureUrl);
 });
 
 test("PDF image URL uses Cloudinary PNG delivery and disallows untrusted hosts", () => {
   assert.equal(
     cloudinaryPdfImageUrl(cloudinaryUrl),
-    "https://res.cloudinary.com/sample-cloud/image/upload/f_png,c_limit,w_320,h_320/v123/furniture/tolix-chair.webp"
+    "https://res.cloudinary.com/sample-cloud/image/upload/f_png,c_limit,w_320,h_320/v123/furniture/tolix-chair.png"
   );
   assert.equal(cloudinaryPdfImageUrl("https://example.com/product.png"), null);
   assert.equal(cloudinaryPdfImageUrl("http://res.cloudinary.com/other/image/upload/test.png"), null);
