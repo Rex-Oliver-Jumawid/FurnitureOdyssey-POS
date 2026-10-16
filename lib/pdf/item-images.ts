@@ -33,7 +33,7 @@ export function quotationItemImageUrl(
     : null;
   const generalImage = firstImage(catalogImages.filter((image) => !image.colorVariantId));
 
-  return (variantImage ?? generalImage)?.secureUrl ?? null;
+  return (variantImage ?? generalImage ?? (!selectedVariantId ? firstImage(catalogImages) : null))?.secureUrl ?? null;
 }
 
 export function cloudinaryPdfImageUrl(secureUrl: string): string | null {
@@ -50,6 +50,7 @@ export function cloudinaryPdfImageUrl(secureUrl: string): string | null {
 
     // Request a format React-PDF supports, without changing the saved original.
     url.pathname = url.pathname.replace(uploadPath, `${uploadPath}f_png,c_limit,w_320,h_320/`);
+    url.pathname = url.pathname.replace(/\.(?:jpe?g|webp|avif|png)$/i, ".png");
     url.search = "";
     url.hash = "";
     return url.toString();
