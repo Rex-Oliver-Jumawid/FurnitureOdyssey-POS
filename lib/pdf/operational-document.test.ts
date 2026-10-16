@@ -302,6 +302,9 @@ test("seeded demo quotation PDFs replace payment details and signature with samp
   assert.match(quotationSource, /isDemoQuotation \? demoQuotationPaymentTerms : data.paymentTermsBlock/);
   assert.match(sharedSource, /demo \? "Sample Representative" : dreamHomeBrand.preparedBy/);
   assert.match(sharedSource, /demo \? \(/);
+  assert.match(sharedSource, /<DemoSignature compact=\{compact\} \/>/);
+  assert.match(sharedSource, /dreamHomeSignatureSource \? \(/);
+  assert.doesNotMatch(sharedSource, /DEMO - NO SIGNATURE/);
 
   const pdf = await renderQuotationPdf({
     ...sampleQuotationData(),
