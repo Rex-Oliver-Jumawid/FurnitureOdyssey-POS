@@ -353,7 +353,7 @@ function CustomerCreateDrawer({
                           type="checkbox"
                           checked={contact.isPrimary}
                           onChange={(event) => updateContact(index, "isPrimary", event.target.checked)}
-                          className="h-4 w-4 accent-[hsl(var(--primary))]"
+                          className="h-4 w-4 accent-primary"
                         />
                         Primary
                       </label>
@@ -766,7 +766,7 @@ function CustomerEditDrawer({
                           type="checkbox"
                           checked={contact.isPrimary}
                           onChange={(event) => updateContact(index, "isPrimary", event.target.checked)}
-                          className="h-4 w-4 accent-[hsl(var(--primary))]"
+                          className="h-4 w-4 accent-primary"
                         />
                         Primary
                       </label>
