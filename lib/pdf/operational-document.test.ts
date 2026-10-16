@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { defaultPdfLogoPath, defaultPdfLogoSource } from "@/lib/pdf/assets";
 import { companyForPdf } from "@/lib/pdf/data";
+import { demoQuotationPaymentTerms, isDemoQuotationFilename } from "@/lib/pdf/demo-quotation-content";
 import { formatMoney, shouldDisplayPdfAmountRow } from "@/lib/pdf/formatters";
 import { renderOperationalPdf, renderQuotationPdf } from "@/lib/pdf/render";
 import { defaultAppSettings, defaultPaymentSettings } from "@/lib/settings/get-settings";
@@ -264,9 +265,30 @@ test("quotation layout uses configurable terms without removing prepared by", ()
   const source = readFileSync("lib/pdf/quotation-document.tsx", "utf8");
 
   assert.match(source, /PdfPaymentTermsBlockView/);
-  assert.match(source, /data\.paymentTermsBlock \? <PdfPaymentTermsBlockView/);
+  assert.match(source, /paymentTermsBlock \? <PdfPaymentTermsBlockView/);
   assert.match(source, /: <DreamHomePolicies \/>/);
-  assert.match(source, /<DreamHomePreparedBy \/>/);
+  assert.match(source, /<DreamHomePreparedBy demo=\{isDemoQuotation\} \/>/);
+});
+
+test("seeded demo quotation PDFs replace payment details and signature with sample content", async () => {
+  assert.equal(isDemoQuotationFilename("quotation-QUO-DEMO-1001-2026-10-16.pdf"), true);
+  assert.equal(isDemoQuotationFilename("quotation-QT-1001-2026-10-16.pdf"), false);
+  assert.equal(isDemoQuotationFilename("quotation-DEMONSTRATION-1001.pdf"), false);
+  assert.match(demoQuotationPaymentTerms.highlightNote ?? "", /DEMO ONLY/);
+  assert.ok(demoQuotationPaymentTerms.bankDetailsLines.every((line) => !line.includes("JOHN JETHRO")));
+  assert.match(demoQuotationPaymentTerms.bankDetailsLines.join(" "), /not a valid account/);
+
+  const quotationSource = readFileSync("lib/pdf/quotation-document.tsx", "utf8");
+  const sharedSource = readFileSync("lib/pdf/dream-home-layout.tsx", "utf8");
+  assert.match(quotationSource, /isDemoQuotation \? demoQuotationPaymentTerms : data.paymentTermsBlock/);
+  assert.match(sharedSource, /demo \? "Sample Representative" : dreamHomeBrand.preparedBy/);
+  assert.match(sharedSource, /demo \? \(/);
+
+  const pdf = await renderQuotationPdf({
+    ...sampleQuotationData(),
+    filename: "quotation-QUO-DEMO-1001-2026-10-16.pdf"
+  });
+  assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
 });
 
 test("quotation PDF renders customer address between issued row and item table only when present", () => {
