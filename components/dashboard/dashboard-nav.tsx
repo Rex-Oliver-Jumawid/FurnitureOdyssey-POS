@@ -25,13 +25,13 @@ export function DashboardNav({ allowedHrefs }: DashboardNavProps) {
             key={item.href}
             href={item.href}
             className={cn(
-              "inline-flex min-h-10 shrink-0 items-center gap-3 rounded-lg px-3 text-sm font-medium transition lg:flex lg:min-h-9 lg:gap-2.5 lg:px-2.5 xl:min-h-10 xl:gap-3 xl:px-3",
+              "inline-flex min-h-10 shrink-0 items-center gap-3 rounded-lg border-l-2 border-transparent px-3 text-sm font-medium transition lg:flex lg:min-h-9 lg:gap-2.5 lg:px-2.5 xl:min-h-10 xl:gap-3 xl:px-3",
               isActive
-                ? "bg-soft-accent text-foreground ring-1 ring-border"
-                : "text-muted-foreground hover:bg-muted/55 hover:text-foreground"
+                ? "border-primary bg-primary/10 text-foreground ring-1 ring-primary/15"
+                : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
             )}
           >
-            <Icon className={cn("h-4 w-4", isActive ? "text-accent" : undefined)} />
+            <Icon className={cn("h-4 w-4", isActive ? "text-primary" : undefined)} />
             {item.title}
           </Link>
         );

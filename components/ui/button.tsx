@@ -11,7 +11,7 @@ export function Button({ className, variant = "primary", ...props }: ButtonProps
       className={cn(
         "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60",
         variant === "primary" &&
-          "border border-primary/30 bg-primary text-primary-foreground hover:bg-primary/90",
+          "border border-primary bg-primary text-primary-foreground hover:border-[var(--red-hover)] hover:bg-[var(--red-hover)]",
         variant === "secondary" &&
           "border border-border bg-soft-accent/70 text-foreground hover:bg-soft-accent",
         variant === "ghost" && "text-foreground hover:bg-muted/60",

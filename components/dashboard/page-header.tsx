@@ -10,7 +10,7 @@ export function PageHeader({ title, description, eyebrow = "Sales Operations", c
     <div className="mb-6 flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="studio-kicker mb-2">{eyebrow}</p>
-        <h1 className="text-2xl font-semibold tracking-normal text-foreground">{title}</h1>
+        <h1 className="text-3xl font-normal tracking-tight text-foreground">{title}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
       </div>
       {children}

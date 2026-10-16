@@ -1,5 +1,10 @@
 import type { Config } from "tailwindcss";
 
+/* Relative RGB keeps alpha utilities (bg-primary/10, border-primary/30)
+ * linked to the same hex palette used by the marketing site.
+ */
+const color = (token: string) => `rgb(from var(--${token}) r g b / <alpha-value>)`;
+
 const config: Config = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,23 +14,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        muted: "hsl(var(--muted))",
-        "muted-foreground": "hsl(var(--muted-foreground))",
-        border: "hsl(var(--border))",
-        panel: "hsl(var(--panel))",
-        primary: "hsl(var(--primary))",
-        "primary-foreground": "hsl(var(--primary-foreground))",
-        accent: "hsl(var(--accent))",
-        "accent-foreground": "hsl(var(--accent-foreground))",
-        "soft-accent": "hsl(var(--soft-accent))",
-        success: "hsl(var(--success))",
-        warning: "hsl(var(--warning))",
-        danger: "hsl(var(--danger))"
+        background: color("background"),
+        foreground: color("foreground"),
+        muted: color("surface-muted"),
+        "muted-foreground": color("muted-foreground"),
+        border: color("border"),
+        panel: color("panel"),
+        primary: color("primary"),
+        "primary-foreground": color("primary-foreground"),
+        accent: color("accent"),
+        "accent-foreground": color("accent-foreground"),
+        "soft-accent": color("soft-accent"),
+        success: color("success"),
+        warning: color("warning"),
+        danger: color("danger")
       },
       boxShadow: {
-        line: "inset 0 -1px 0 hsl(var(--border))"
+        line: "inset 0 -1px 0 var(--border)"
       }
     }
   },

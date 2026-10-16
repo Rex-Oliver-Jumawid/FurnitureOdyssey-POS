@@ -2,21 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Canonical Furniture Odyssey / Prometheus brand colors.
+ * Keep semantic aliases below tied to these named palette tokens.
+ */
 :root {
-  --background: 35 34% 90%;
-  --foreground: 22 30% 19%;
-  --muted: 31 31% 83%;
-  --muted-foreground: 25 17% 41%;
-  --border: 30 31% 77%;
-  --panel: 33 46% 95%;
-  --primary: 176 15% 56%;
-  --primary-foreground: 22 30% 19%;
-  --accent: 30 45% 50%;
-  --accent-foreground: 33 46% 95%;
-  --soft-accent: 32 48% 83%;
-  --success: 77 16% 48%;
-  --warning: 30 45% 50%;
-  --danger: 6 37% 44%;
+  color-scheme: light;
+  --ink: #25201F;
+  --muted: #776D67;
+  --ivory: #FFF4EA;
+  --paper: #FBF9F6;
+  --beige: #F5F0EB;
+  --red: #BD3434;
+  --burgundy: #642B2D;
+  --line: #E5DDD7;
+  --white: #FFFFFF;
+
+  --pricing-surface: #F8F4F0;
+  --feature-surface: #F7F3EF;
+  --red-hover: #9B252B;
+
+  /* Semantic dashboard colors, shared by Tailwind and component styles. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --surface-muted: var(--beige);
+  --muted-foreground: var(--muted);
+  --border: var(--line);
+  --panel: var(--white);
+  --primary: var(--red);
+  --primary-foreground: var(--white);
+  --accent: var(--burgundy);
+  --accent-foreground: var(--ivory);
+  --soft-accent: var(--beige);
+
+  /* Operational states remain distinct from the brand accent. */
+  --success: #367257;
+  --warning: #91601C;
+  --danger: #A32932;
 }
 
 * {
@@ -25,9 +46,14 @@
 
 body {
   margin: 0;
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
   font-feature-settings: "liga" 1, "calt" 1;
+}
+
+h1 {
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 a {
@@ -43,18 +69,18 @@ textarea {
 }
 
 ::selection {
-  background: hsl(var(--soft-accent));
-  color: hsl(var(--foreground));
+  background: var(--beige);
+  color: var(--ink);
 }
 
 @layer base {
   label {
-    color: hsl(var(--foreground));
+    color: var(--foreground);
   }
 
   input[type="checkbox"],
   input[type="radio"] {
-    accent-color: hsl(var(--primary));
+    accent-color: var(--primary);
   }
 
   input:-webkit-autofill,
@@ -62,9 +88,9 @@ textarea {
   input:-webkit-autofill:focus,
   textarea:-webkit-autofill,
   select:-webkit-autofill {
-    -webkit-text-fill-color: hsl(var(--foreground));
-    box-shadow: 0 0 0 1000px hsl(var(--panel)) inset;
-    caret-color: hsl(var(--foreground));
+    -webkit-text-fill-color: var(--foreground);
+    box-shadow: 0 0 0 1000px var(--panel) inset;
+    caret-color: var(--foreground);
     transition: background-color 9999s ease-out;
   }
 
@@ -73,21 +99,27 @@ textarea {
   }
 
   table tbody tr:hover {
-    background-color: hsl(var(--muted) / 0.32);
+    background-color: color-mix(in srgb, var(--beige) 65%, transparent);
   }
 }
 
 @layer components {
+  .brand-name {
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: -0.025em;
+  }
+
   .studio-card {
     overflow: hidden;
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.75rem;
-    background: hsl(var(--panel));
+    border: 1px solid var(--border);
+    border-radius: 0.875rem;
+    background: var(--panel);
+    box-shadow: 0 3px 16px rgb(37 32 31 / 0.035);
   }
 
   .studio-card-header {
-    border-bottom: 1px solid hsl(var(--border));
-    background: hsl(var(--panel));
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
     padding: 1rem 1.25rem;
   }
 
@@ -96,32 +128,32 @@ textarea {
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: hsl(var(--accent));
+    color: var(--red);
   }
 
   .studio-subpanel {
-    border: 1px solid hsl(var(--border));
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
-    background: hsl(var(--background));
+    background: var(--background);
   }
 
   .studio-empty {
-    border: 1px dashed hsl(var(--border));
+    border: 1px dashed var(--border);
     border-radius: 0.5rem;
-    background: hsl(var(--background));
-    color: hsl(var(--muted-foreground));
+    background: var(--background);
+    color: var(--muted-foreground);
   }
 
   .studio-table thead {
-    background: hsl(var(--soft-accent) / 0.34);
-    color: hsl(var(--muted-foreground));
+    background: var(--feature-surface);
+    color: var(--muted-foreground);
   }
 
   .studio-table tbody {
-    background: hsl(var(--panel));
+    background: var(--panel);
   }
 
   .studio-card table thead {
-    background: hsl(var(--soft-accent) / 0.34);
+    background: var(--feature-surface);
   }
 }

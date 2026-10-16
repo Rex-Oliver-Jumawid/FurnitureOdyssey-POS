@@ -31,21 +31,22 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
       <aside className="border-b border-border bg-panel lg:sticky lg:top-0 lg:h-dvh lg:overflow-y-auto lg:border-b-0 lg:border-r">
         <div className="flex min-h-16 items-center gap-3 border-b border-border px-4 xl:min-h-20 xl:px-5">
           <Image
-            src="/fo-logo.png"
+            src="/brand-mark.webp"
             alt="Furniture Odyssey logo"
-            width={44}
-            height={44}
-            className="h-10 w-10 rounded-xl border border-border object-cover xl:h-11 xl:w-11"
+            width={48}
+            height={48}
+            priority
+            className="h-12 w-12 shrink-0 object-contain"
           />
           <div>
-            <p className="text-base font-semibold leading-5">Furniture Odyssey</p>
+            <p className="brand-name text-lg font-semibold leading-5">Furniture Odyssey</p>
             <p className="studio-kicker mt-1">Sales Studio</p>
           </div>
         </div>
         <DashboardNav allowedHrefs={visibleItems.map((item) => item.href)} />
       </aside>
       <div className="min-w-0">
-        <header className="sticky top-0 z-30 flex min-h-14 items-center justify-between border-b border-border bg-panel px-4 sm:px-5 lg:px-6 xl:min-h-16 xl:px-8">
+        <header className="sticky top-0 z-30 flex min-h-14 items-center justify-between border-b border-border bg-panel/95 px-4 backdrop-blur-sm sm:px-5 lg:px-6 xl:min-h-16 xl:px-8">
           <div>
             <p className="text-sm font-medium">{user.displayName}</p>
             <p className="text-xs text-muted-foreground">{user.role}</p>
