@@ -402,6 +402,7 @@ export async function getQuotationPdfData(quotationId: string): Promise<Operatio
           product: {
             select: {
               images: {
+                orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }, { createdAt: "asc" }],
                 select: {
                   secureUrl: true,
                   isPrimary: true,
